@@ -1,0 +1,13 @@
+Package: dingfeicdpo
+Type: Package
+Title: The coordinate descent method and the proximal operator method
+Version: 1.0
+Date: 2017-10-13
+Author: Fei Ding
+Maintainer: Fei Ding <2016000098@ruc.edu.cn>
+Description: There are two methods called coordinate descent method and proximal operator method 
+             in this packages,you can use thesemethod to compute the problem of Lasso.
+License: MIT
+Imports: Rcpp (>= 0.12.13)
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 6.0.1

@@ -1,0 +1,69 @@
+#define the function of regularization
+standvector = function(y){
+  return(y-mean(y))
+}
+
+standmatrix = function(X){
+  n=dim(X)[1]
+  p=dim(X)[2]
+  meanvec=c()
+  squarevec=c()
+  for(i in 1:p){
+    X[,i]=X[,i]-mean(X[,i])
+  }
+  for(j in 1:p){
+    squarevec=append(squarevec,sum(X[,j]*X[,j]))
+  }
+  for(k in 1:p){
+    X[,k]=X[,k]/(sqrt(squarevec[k]/n))
+  }
+  return(X)
+}
+#define the parameters
+n = 100
+p = 500
+sigma_noise = 0.5
+beta = rep(0, p)
+beta[1:6] = c(5,10,3,80,90,10)
+X = matrix(rnorm(n*p,sd=10), nrow = n, ncol=p)
+X_stand=standmatrix(X)
+y = X_stand %*% beta + rnorm(n, sd = sigma_noise)
+y_stand=standvector(y)
+lambda = 0.2
+maxinteration = 5000
+
+
+# Compute Coordinate descent 
+betaHat1 = cdescent(y_stand, X_stand, lambda,maxinteration)
+diff1 = unlist(betaHat1["cdescent_beta"]) - beta
+L2Loss_cdescent = sqrt(sum(diff1^2))
+
+#True Positive Rate
+TP = sum(abs(beta)>0 & abs(unlist(betaHat1["cdescent_beta"]) )>0) / sum(abs(beta)>0)
+# True Negative Rate
+TN = sum(abs(beta)==0 & abs(unlist(betaHat1["cdescent_beta"]) )==0) / sum(abs(beta)==0)
+
+# Compute Proximal Operator
+betaHat2 = proxoperator(y_stand, X_stand, lambda,maxinteration)
+
+diff2 = unlist(betaHat2["proxoperator_beta"]) - beta
+L2Loss_proxoperator = sqrt(sum(diff2^2))
+
+#the loss of two method
+L2Loss_cdescent
+L2Loss_proxoperator
+
+#write the paragraph
+xlable = 1: maxinteration
+plot(xlable,log10(unlist(betaHat1["cdescent_objectvalue"])),main="Coordinate Descent vs Proximal Operator",xlim=c(0,25),ylim=c(1.5,3.5),
+     type="o",col=4, yaxs="i",xaxs="i",
+     xlab="interations",ylab="objectvalue(log10 scale)",pch=20,cex = 0.7)
+
+
+lines(xlable,log10(unlist(betaHat2["proxoperator_objectvalue"])),lwd=0.5,xlim=c(0,100),ylim=c(1.5,3.5),
+    type="o",col=2, yaxs="i",xaxs="i",
+     xlab="interations",ylab="objectvalue(log10 scale)",pch=20,cex = 0.7)
+
+legend("topright", inset = 0.05,
+       c("Coordinate Descent", "Proximal Operator"), lty = c(1, 1), pch = c(20, 20), col = c("blue",
+                                                            "red"))

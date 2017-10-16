@@ -1,0 +1,4 @@
+dingfeicdpo是R包
+homeworkdingfei.Rmd是演示的Rmarkdown
+homeworkdingfei.html是Rmarkdown生成的文件
+testafterregularization.R是检验R包做数值模拟的Rcript
